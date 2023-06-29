@@ -12,6 +12,7 @@ jobs:
 
       - uses: xu-cheng/latex-action@v2
         with:
+          latexmk_use_xelatex: true
           root_file: |
             dolphin-book-2023.tex
 
@@ -22,4 +23,4 @@ jobs:
           username: ${{ secrets.USER }}
           password: ${{ secrets.PASSWORD }}
           source: "dolphin-book-2023.pdf"
-          target: /home/ubuntu/apps/cv-render/
+          target: /home/ubuntu/apps/

@@ -1,0 +1,32 @@
+\documentclass[../../../dolphin-book-2023.tex]{subfiles}
+
+
+\begin{document}
+
+\subsection{字体概览}
+
+传统西文字体可以粗略的分为衬线字体（Serif）、无衬线字体（Sans-serif）、等宽字体（Monospaced）。衬线字体指的是在字符的末尾添加了小笔画的字体，这些额外的装饰被称为衬线。衬线字体通常用于正文文本，因为衬线有助于提升可读性和流畅性。同时在印刷材料上使用的较多，因为它们有助于长时间阅读。一些常见的衬线字体包括 Times New Roman、Garamond 和 Baskerville。无衬线字体没有在字符末尾添加衬线，因此它们的字母形状更加简洁和直接。无衬线字体通常在数字显示、网页设计和大标题等方面使用，因为它们在屏幕上显示时更容易阅读。常见的无衬线字体有 Arial、Helvetica 和 Verdana。等宽字体中，每个字符都具有相同的固定宽度，无论是宽字符（如"M"）还是窄字符（如"I"）。等宽字体主要用于编程和排版需要对齐的文本，以确保字符在垂直方向上对齐。其中一种广为人知的等宽字体是 Courier。现在最标准的分类系统是瓦克斯分类系统（Vox）。最初是由马克西米连·瓦克斯（Maximilien Vox）于1945年提出，在1962年由国际文字设计协会（the Association Typographique International）采用，2010年的会议上做了一些细微的调整，将凯尔特体（Gaelic）细分成为一个类别。
+
+1967年英国标准字体分类（the British Standards Classification of Typefaces）被采用，它基于瓦克斯分类方法，但稍微做了一些简化，在采用后基本上没有变化。
+
+Robert Bringhurst在《the Elements of Typographic Style》中也根据艺术流派提到了字体的分类，比如：巴洛克风格（Baroque），洛可可（Rococo），浪漫主义（Romantic）等风格的字体。
+
+我们主要阐述的瓦克斯分类法(Vox-ATypI classification)，它是根据字体具有代表性的特定时期（从15世纪至今），基于一些字型上的标准，像：笔画粗细，衬线形式，笔锋的轴线，x字高等对字体进行区别归类。尽管瓦克斯分类法定义了字体的类别，但是许多字体不仅仅属于一种分类当中。
+
+瓦克斯分类法将字体分为三个大大类：古典风格字体（Classicals）、现代风格字体（Moderns）、书法体（Calligraphics）。再将这三大类细分为人文主义体（Humanist），加拉德体（Garalde），过渡体（Transitional）——古典风格字体；迪多尼（Didone），机械风格体（Mechanistic），线体（Lineals）——现代风格字体；雕刻体（Glyphic），草体（Script），图形字体（Graphic），黑体（Blackletter）和凯尔特体（Gaelic）——书法字体。其中线体中又细分为了格洛特斯克体（Grotesque），新格洛特斯克体（Neo-grotesque），几何体（Geometric），无衬线人文主义体（Lineal Humanist）。
+
+计算机中渲染的字体可以分为点阵字体(Dot-matrix-fonts)和矢量字体(Vector Fonts)2大类。在计算机发展早期没有图形界面或图形界面功能简陋之时，字体格式全是点阵字体。所谓点阵字体或更符合其特征的称呼为位图字体(Bitmap fonts)，每个字形都以一组二维像素信息表示。点阵字体的原理非常简单，对于每一种存在的字号，都存储其特定字符特定字号对应的位图信息，需要时直接输出出来即可。其实在现代Windows操作系统中，我们还是可以找到点阵字体的身影。打开一个cmd，右键标题栏属性，在字体选项卡中我们可以看到默认输出字体就是点阵字体，而且当我们切换字体大小时，我们可以看到字体的样子发生了巨大的改变，看上去根本就不像同一种字体。这恰恰证明了点阵字体是预先设计好直接输出而非即时渲染的特点。对于纯点阵字体，其常见的字体格式包括： bdf，pcf，fnt，hbf\footnote{BDF: BDF 是 "Glyph Bitmap Distribution Format" 的缩写，也称为 X Window System Bitmap Distribution Format。它是一种用于存储点阵字体的文件格式，最初由 X Window System 使用。
+
+PCF: PCF 是 "Portable Compiled Format" 的缩写。PCF 字体格式同样用于存储点阵字体，它是用于 X Window System 的一种改进格式。PCF 格式支持压缩和国际化字符集，并且具有更好的兼容性和可移植性。
+
+FNT: FNT 是 "Font" 的简写，用于表示 Windows 系统中的点阵字体文件。FNT 文件包含了字符的位图图像以及字体的相关信息。
+
+HBF: HBF 是 "Han Bitmap Font" 的缩写，用于表示汉字点阵字体文件的格式。HBF 格式主要用于存储和处理汉字的位图字形，是针对中文字符的一种点阵字体格式。}。由于图形界面的飞速发展和人们对随心随欲放大缩小字号的需要，设计出来什么字号就只能用什么字号的点阵字体显然并不能满足需求。并且，英文字母是只有26个，但是当CJK字库加入进来后，维护各种各样字体各种各样大小的中文日文韩文字号显然并不切实际。于是矢量字体或称为轮廓字体(Outline Fonts)引入了进来。矢量字体使用贝塞尔曲线描述轮廓，当字体被使用时，计算机即时渲染出对应字号的字体。矢量字体最典型的格式有PostScript，Type1，TrueType和OpenType。TrueType由Apple和微软参与开发，由于Windows和Mac的普及，是当今使用最多的字体格式。
+
+Type1：全称PostScript Type1，是1985年由Adobe公司提出的一套矢量字体标准，使用贝塞尔曲线描述字形，称为PostScript曲线。是非开放字体，使用需要收费。
+
+TrueType：TrueType是1991年由苹果（Apple）公司与 微软（Microsoft）公司联合提出另一套矢量字标准。虽然与Type1都是使用贝塞尔曲线描述字体轮廓，但是Type1使用三次贝塞尔曲线来描述字形，而TrueType使用的是二次贝塞尔曲线（TrueType曲线）。TrueType 曲线可接受典型的 hinting，可告知栅格化引擎在栅格化之前应该如何把轮廓扭曲，这样可精确控制字体的抗锯齿结果。
+
+Opentype：是1995年由微软（Microsoft）和 Adobe公司开发的另外一种字体格式 ，基于TrueType扩展，内部兼容了TrueType 曲线和 PostScript 曲线。并且真正支持 Unicode的字体，最多可以支持 65535 个码位。其后缀名可以是ttf或者otf。仅包含TrueType 曲线，其后缀名一般是ttf，包含有 PostScript 曲线的，后缀名则是otf。
+
+\end{document}
