@@ -1,0 +1,68 @@
+\documentclass[../../../dolphin-book-2023.tex]{subfiles}
+
+\begin{document}
+
+\subsection{减少镜像体积-distroless}
+
+由于目前费用紧张，导致服务器的存储资源比较紧张，部署应用时，减少镜像的体积成为了不得不关注的问题。一般构建镜像时，镜像的体积就是基础镜像的体积加应用所占用的体积，在应用体积不变的情况下，减少镜像的体积可以通过选用更小的基础镜像来实现。目前小体积的基础镜像大致如下：
+
+\begin{table}[htbp]
+	\caption{基础镜像大小}
+	\label{table:baseimagesize}
+	\begin{center}
+		\begin{tabular}{cccp{1cm}}
+			\hline
+			\multirow{1}{*}{镜像名称}
+			& \multicolumn{1}{c}{版本}
+            & \multicolumn{1}{c}{发布日期}
+            & \multicolumn{1}{c}{大小}\\			
+			\cline{1-4}
+            Alpine & 3.18 & 2023-05-29 & 5MB \\ 
+            \hline
+            Distroless & d70ca864bac5 & & 2.45MB \\ 
+			\hline
+			Busybox & 1.36.1 & 2023-05-19 & 4.04MB \\
+			\hline
+            Scratch & - & - & 0MB \\
+			\hline
+		\end{tabular}	
+	\end{center}
+\end{table}
+
+Alpine 是一个基于 BusyBox 的轻量级 Linux 发行版。它的特点是非常小巧（通常只有几兆字节），同时提供了完整的包管理系统（APK）。由于其小巧和安全性，Alpine 在容器化应用程序中广泛使用。Alpine 镜像通常用于构建具有基本运行时环境和必要软件包的容器。它可以通过 APK 包管理器来安装其他需要的软件包。Distroless 是谷歌开发的一种极简容器镜像，旨在提供最小化的运行时环境。与其他镜像不同，Distroless 镜像只包含了应用程序运行所需的最小组件，没有操作系统发行版或额外的工具。这使得容器变得更加轻量级、更容易部署和更安全。Distroless 镜像不提供包管理器，通常用于运行无需依赖其他系统库的静态可执行文件或者只依赖少数系统库的应用程序。Busybox 是一个实现了一系列常见 UNIX 工具的单个可执行文件。它的目标是在一个小巧的二进制文件中提供多种命令行工具，如文件操作、文本处理、网络工具等。Busybox 容器镜像通常用于那些依赖许多基本命令行工具的应用程序，它可以提供完整的 shell 环境和常用的系统工具。Scratch 是 Docker 提供的一个特殊的空白镜像。它只包含了容器运行所需的最小组件，没有任何系统库或工具。Scratch 镜像适合用于构建静态可执行文件或完全不需要操作系统环境的应用程序。由于其极简的特性，Scratch 镜像通常用作最小化和定制化的基础镜像，开发人员可以根据需要自由地向其中添加所需的组件。
+
+以下用实际的示例来说明是如何来减少镜像的体积的，我们的网站后端是用rust实现的少量restful风格的接口，在没有选用Distroless镜像之前，使用的是debian:bullseye作为基础镜像，构建完毕后，大概有70MB+的体积，70MB+的体积对一个2023年的应用来说，确实算不上庞大，但是还是希望能够尽可能的减少体积。根据以往的经验来看，更大的镜像体积，可能会导致更多次生问题。调整为Distroless镜像后，Dockerfile文件如下：
+
+\begin{lstlisting}
+ARG BASE_IMAGE=messense/rust-musl-cross:x86_64-musl
+
+# Our first FROM statement declares the build environment.
+FROM ${BASE_IMAGE} AS builder
+
+# Add our source code.
+WORKDIR /app
+
+COPY . .
+
+RUN rustup target add x86_64-unknown-linux-musl
+
+RUN sudo apt-get update && apt-get install libssl-dev pkg-config musl-tools -y
+
+# Build our application.
+RUN cargo build --release --target=x86_64-unknown-linux-musl
+
+FROM gcr.io/distroless/static-debian11
+LABEL maintainer="jiangtingqiang@gmail.com"
+WORKDIR /app
+ENV ROCKET_ADDRESS=0.0.0.0
+# ENV ROCKET_PORT=11014
+#
+# only copy the execute file to minimal the image size
+# do not copy the release folder
+COPY --from=builder /app/target/x86_64-unknown-linux-musl/release/alt-server /app/
+CMD ["./alt-server"]
+\end{lstlisting}
+
+第一阶段构建出rust的可运行程序，第二阶段以最终的可运行二进制程序来构建最小化目标镜像。最终的镜像大小做到了6MB，只有不到原来大小的1/10。
+
+\end{document}

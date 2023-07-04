@@ -1,0 +1,36 @@
+\documentclass[../../../dolphin-book-2023.tex]{subfiles}
+
+\begin{document}
+
+\subsection{Rust静态链接}
+
+静态链接指在编译期间就将所有的依赖库(包括Rust本身库和C库等)都打包到二进制文件中；动态链接则在程序运行时，从操作系统中将所需的库加载到程序中。静态链接的优点是程序一次编译即可在多个三元组相同的目标平台上运行，发布更容易一些，但是库一旦更新就需要重新编译；动态链接则是多个程序共享想同的库，因此程序文件体积更小，且对库更新无感知，但要求目标系统具有该库。 对于目标系统类型为*-*-linux-gnu*的情形，Rust一般会将glibc和其他库动态链接到编译的二进制文件中1。
+
+\paragraph{为什么要静态链接}
+
+目前静态链接最能够解决的痛点就是Docker镜像大小，经过初步尝试，静态链接目标镜像初始大小只有3MB多，令人惊叹。以最少的资源投入，获取需要的效果。
+
+\paragraph{MUSL实现静态链接}
+
+Rust实现静态链接的方式之一是使用MUSL库，也是最早支持静态链接的方式。第一步添加x86\_64-unknown-linux-musl。
+
+\begin{lstlisting}[language=Bash]
+rustup target add x86_64-unknown-linux-musl
+\end{lstlisting}
+
+第二步，使用如下的命令构建：
+
+\begin{lstlisting}[language=Bash]
+cargo build --target=x86_64-unknown-linux-musl
+\end{lstlisting}
+
+\paragraph{C runtime实现静态链接}
+
+从Rust 1.19版本开始，支持C runtime实现静态链接，不过好像仅仅支持Windows。从2020-11-19发布对1.48.0版本开始，开始支持GNU Linux。构建时传入参数，如下命令所示：
+
+\begin{lstlisting}[language=Bash]
+RUSTFLAGS='-C target-feature=+crt-static' cargo build --release --target x86_64-unknown-linux-gnu
+\end{lstlisting}
+
+
+\end{document}
