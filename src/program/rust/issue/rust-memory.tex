@@ -1,0 +1,16 @@
+\documentclass[../../../dolphin-book-2023.tex]{subfiles}
+
+\begin{document}
+
+\subsection{Rust内存占用}
+
+启动Rust应用后，自动被操作系统结束进程，查看操作系统日志。
+
+\begin{lstlisting}
+[29569514.446990] Memory cgroup out of memory: Kill process 26178 (tokio-runtime-w) score 2094 or sacrifice child
+[29569514.448350] Killed process 25960 (rss-sync), UID 0, total-vm:49068kB, anon-rss:24224kB, file-rss:5316kB, shmem-rss:0kB   
+\end{lstlisting}
+
+
+
+\end{document}

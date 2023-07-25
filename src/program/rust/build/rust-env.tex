@@ -1,0 +1,15 @@
+\documentclass[../../../dolphin-book-2023.tex]{subfiles}
+
+\begin{document}
+
+\subsection{Rust与环境变量}
+
+在类Unix系统中， 如果设置环境变量首先想到的是调整.bashrc/.zshrc。不过在macOS上用Visual Studio Code开发rust应用时，需要注意Visual Studio Code启动时无法很好的读取终端的环境变量，至少在终端中导出环境变量后，重启Visual Studio Code也是无法读取的，除非从终端中启动Visual Studio Code，那么Visual Studio Code作为终端的一个子进程可以继承终端的环境变量。但需要保证开发过程中需要特定环境变量时必须要从终端中启动Visual Studio Code，带来不便。一种方式是直接在Visual Studio Code启动文件中指定环境变量文件：
+
+\begin{lstlisting}[language=Bash]
+"envFile": "${workspaceFolder}/.env"
+\end{lstlisting}
+
+然后在环境变量文件中设置应用的环境变量，注意环境变量不需要提交到代码仓库。
+
+\end{document}

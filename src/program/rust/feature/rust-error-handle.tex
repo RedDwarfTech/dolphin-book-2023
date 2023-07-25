@@ -1,0 +1,39 @@
+\documentclass[../../../dolphin-book-2023.tex]{subfiles}
+
+\begin{document}
+
+\subsection{Rust错误处理}
+
+\subsubsection{主流的错误处理方式}
+
+Rust在设计时，肯定参考了其他语言错误处理的优点和缺点。在了解Rust的错误处理方式之前，有必要了解目前所有语言的错误处理主流类型。看看每一种错误处理的方式有哪些优点和劣势。从而了解为什么要这么设计，在选择时能做出更加合适的决策。
+
+\paragraph{使用返回值（错误码）}
+
+使用返回值来表征错误，是最古老也是最实用的一种方式，它的使用范围很广，从函数返回值，到操作系统的系统调用的错误码 errno、进程退出的错误码retval，甚至 HTTP API 的状态码，都能看到这种方法的身影。
+
+\paragraph{使用异常}
+
+因为返回值不利于错误的传播，有诸多限制，Java 等很多语言使用异常来处理错误。
+
+你可以把异常看成一种关注点分离（Separation of Concerns）：错误的产生和错误的处理完全被分隔开，调用者不必关心错误，而被调者也不强求调用者关心错误。
+
+程序中任何可能出错的地方，都可以抛出异常；而异常可以通过栈回溯（stack unwind）被一层层自动传递，直到遇到捕获异常的地方，如果回溯到 main 函数还无人捕获，程序就会崩溃。
+
+
+\paragraph{使用类型系统}
+
+
+
+\subsubsection{选择合理的错误处理方式}
+
+Rust处理错误时，根据不同的错误采取不同的处理方式，选择最合理的方式来处理。Rust 将错误组合成两个主要类别：可恢复错误（recoverable）和 不可恢复错误（unrecoverable）。目前的原则是针对不可恢复的错误，以终止程序为主。可恢复的错误，打印日志为主。没有合适的错误处理原则，会让程序意外结束或者过度的嵌套的模式匹配，影响代码美观。例如获取Redis连接时，这样处理：
+
+\begin{lstlisting}
+let config_redis_string: String = env::var("REDIS_URL").expect("redis url missing");
+\end{lstlisting}
+
+这里获取Redis连接串失败时，直接退出应用，因为Redis连接串是需要强制存在的配置，无法获取到Redis连接串，后续的逻辑也无法完成。直接调用expect传入错误信息，结束运行。expect函数和unwrap函数功能点很接近，unwrap会打印出标准库内置的错误信息，而expect函数允许用户定义一个字符串，在程序结束的时候显示。
+
+
+\end{document}

@@ -1,0 +1,30 @@
+\documentclass[../../../dolphin-book-2023.tex]{subfiles}
+
+\begin{document}
+
+\subsection{优化React}
+
+\subsubsection{开启压缩}
+
+\subsubsection{合理拆包}
+
+目前的拆包策略是，尽量保证压缩后的Chunk在100Kb以内。在Vite里是如下的配置：
+
+\begin{lstlisting}
+build: {
+    outDir: "build",
+    rollupOptions: {
+        output: {
+            manualChunks: {
+                react: ['react','react-router-dom','react-dom'],
+                reddwarf: ['rd-component','rdjs-wheel']
+            }
+        }
+    }
+}
+\end{lstlisting}
+
+React相关的依赖打包成一个Chunk，公共依赖打包成一个Chunk，rdjs-wheel包含所有公共依赖，rd-component包含公共组件的依赖。
+
+
+\end{document}

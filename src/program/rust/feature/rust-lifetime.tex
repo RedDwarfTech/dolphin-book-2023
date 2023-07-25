@@ -1,0 +1,23 @@
+\documentclass[../../../dolphin-book-2023.tex]{subfiles}
+
+\begin{document}
+
+\subsection{Rust生命周期}
+
+在Rust中每个引用都有自己的生命周期，生命周期保证了引用保持有效的作用域，在大多数情况下这个生命周期是隐式的，是可以被推断出来的，当引用的生命周期可能以不同的方式互相关联时，那就要手动标注生命周期了。
+
+\subsubsection{悬垂引用}
+
+生命周期最主要的作用就是避免悬垂引用，进而避免程序引用到非预期的数据。例子：
+
+\begin{lstlisting}[language=Rust]
+fn main() {
+    let s = String::from("hello").as_str();
+    println!("slice: {}", s); 
+}
+\end{lstlisting}
+
+上面的代码在编译时会提示错误：temporary value dropped while borrowed，consider using a `let` binding to create a longer lived value。是因为as\_str只是持有String的引用，String在代码运行结束后会自动drop掉，导致s变成了悬垂引用。
+
+
+\end{document}

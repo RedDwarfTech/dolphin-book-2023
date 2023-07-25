@@ -4,25 +4,47 @@
 
 \subsection{Rust静态链接}
 
-静态链接指在编译期间就将所有的依赖库(包括Rust本身库和C库等)都打包到二进制文件中；动态链接则在程序运行时，从操作系统中将所需的库加载到程序中。静态链接的优点是程序一次编译即可在多个三元组相同的目标平台上运行，发布更容易一些，但是库一旦更新就需要重新编译；动态链接则是多个程序共享想同的库，因此程序文件体积更小，且对库更新无感知，但要求目标系统具有该库。 对于目标系统类型为*-*-linux-gnu*的情形，Rust一般会将glibc和其他库动态链接到编译的二进制文件中1。
+静态链接库（Statically-linked Library）和动态链接库（Dynamically-linked Library）是两种实现共享函数库概念的实现方式。静态链接指在编译期间就将所有的依赖库(包括Rust本身库和C库等)都打包到二进制文件中；动态链接则在程序运行时，从操作系统中将所需的库加载到程序中。静态链接的优点是程序一次编译即可在多个三元组相同的目标平台上运行，发布更容易一些，但是库一旦更新就需要重新编译；动态链接则是多个程序共享想同的库，因此程序文件体积更小，且对库更新无感知，但要求目标系统具有该库。 对于目标系统类型为*-*-linux-gnu*的情形，Rust一般会将glibc和其他库动态链接到编译的二进制文件中1。
 
 \paragraph{为什么要静态链接}
 
-目前静态链接最能够解决的痛点就是Docker镜像大小，经过初步尝试，静态链接目标镜像初始大小只有3MB多，令人惊叹。以最少的资源投入，获取需要的效果。
+目前静态链接最能够解决的痛点就是Docker镜像大小，动态链接一般需要依赖GNU C标准库，一般情况下采用GNU C标准库的基础镜像大小就已经有几十MB了。经过初步尝试，静态链接目标镜像初始大小只有3MB多，令人惊叹。以最少的资源投入，获取需要的效果。
 
 \paragraph{MUSL实现静态链接}
 
-Rust实现静态链接的方式之一是使用MUSL库，也是最早支持静态链接的方式。第一步添加x86\_64-unknown-linux-musl。
+Rust实现静态链接的方式之一是使用MUSL库，也是最早支持静态链接的方式。默认情况下，Rust 将静态链接所有 Rust 代码。但是，如果使用标准库，它将动态链接到系统的 libc 实现。如果您想要100％静态二进制文件，可以在 Linux上使用 MUSL libc。要添加对MUSL的支持，需要选择正确的目标。下面以Linux平台为例，说明如何实现静态链接。第一步添加target x86\_64-unknown-linux-musl。
 
 \begin{lstlisting}[language=Bash]
 rustup target add x86_64-unknown-linux-musl
 \end{lstlisting}
 
-第二步，使用如下的命令构建：
+Rust 编译时 target 的命名规则为：[arch]-[vendor]-[sys]-[abi]。[arch]：表示目标处理器的架构，如 x86、arm、aarch64 等。[vendor]：可选项，表示提供该平台的组织，如 apple、linux、unknown 等。[sys]：表示目标操作系统或运行时环境，如 linux、windows、android 等。[abi]：可选项，表示二进制接口，即库和应用程序之间的标准化接口，如 gnu、eabi、msvc 等。例如，aarch64-unknown-linux-gnu 中，aarch64 表示系统架构为 ARM 64位，unknown 表示提供平台的组织未知，linux 表示目标操作系统为 Linux，gnu 表示采用 GNU 的二进制接口。第二步，使用如下的命令构建静态链接的二进制文件：
 
 \begin{lstlisting}[language=Bash]
 cargo build --target=x86_64-unknown-linux-musl
 \end{lstlisting}
+
+截止2023年06月，Rust支持的Tier 1级别的target组合有：
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{|l|l|}
+    \hline
+    \textbf{Target} & \textbf{Notes} \\ \hline
+    aarch64-unknown-linux-gnu & ARM64 Linux (kernel 4.1, glibc 2.17+)  \\ \hline
+    i686-pc-windows-gnu & 32-bit MinGW (Windows 7+)  \\ \hline
+    i686-pc-windows-msvc & 32-bit MSVC (Windows 7+)  \\ \hline
+    i686-unknown-linux-gnu & 32-bit Linux (kernel 3.2+, glibc 2.17+) \\ \hline
+    x86\_64-apple-darwin & 64-bit macOS (10.7+, Lion+) \\ \hline
+    x86\_64-pc-windows-gnu & 64-bit MinGW (Windows 7+)  \\ \hline
+    x86\_64-pc-windows-msvc & 64-bit MSVC (Windows 7+)  \\ \hline
+    x86\_64-unknown-linux-gnu & 64-bit Linux (kernel 3.2+, glibc 2.17+) \\ \hline
+    \end{tabular}
+    \caption{Target Notes}
+    \label{tab:target-notes}
+\end{table}
+
+从2023.07官方的支持列表可以知道，x86\_64-unknown-linux-musl是Tier 2级别的支持仅仅是保证可以build成功，不保证运行成功。
 
 \paragraph{C runtime实现静态链接}
 
